@@ -3475,10 +3475,10 @@
   },
   {
     "id": "q6",
-    "q": "_____  are intended primarily to satisfy international requirements for the exchange of aeronautical information.",
+    "q": "_____  are intended primarily to satisfy international requirements for the exchange of aeronautical information..",
     "choices": [
       "Aeronautical information",
-      "Aeronautical information products",
+      "Aeronautical information products.",
       "Aeronautical information service",
       "Aeronautical information management"
     ],
@@ -4473,9 +4473,12 @@
     "id": "q89",
     "q": "Pre-flight planning information provided to users shall include:",
     "choices": [
-      "a) Only NOTAM of national significance\nb) Only AIP and AIC, excluding NOTAM\nc) Information of operational significance from the elements of aeronautical information products\nd) Only information originating from adjacent States"
+      "Only NOTAM of national significance",
+      "Only AIP and AIC, excluding NOTAM",
+      "Information of operational significance from the elements of aeronautical information products",
+      "Only information originating from adjacent States"
     ],
-    "answer": 0,
+    "answer": 2,
     "explanation": "Chapter 5, item 5.5.2, Annex 15"
   },
   {
@@ -11326,7 +11329,7 @@
             ]
         };
 
-        const domainSelect = document.getElementById('domainSelect');
+         const domainSelect = document.getElementById('domainSelect');
         const loadBtn = document.getElementById('loadBtn');
         const shuffleBtn = document.getElementById('shuffleBtn');
         const resetBtn = document.getElementById('resetBtn');
@@ -11449,94 +11452,109 @@ function loadQuestions() {
             }, 1000);
         }
 
-        function submitTest() {
-            clearInterval(timerInterval);
-            let correctCount = 0;
-            let isEssayDomain = selectedDomain === 'ESSAY';
+function submitTest() {
+    clearInterval(timerInterval);
+    let correctCount = 0;
+    let isEssayDomain = selectedDomain === 'ESSAY';
 
-            activeQuestions.forEach(qObj => {
-                const userAnswer = userAnswers[qObj.id];
-                const qDiv = document.getElementById(`q_${qObj.id}`);
-                const explanationEl = document.getElementById(`explain_${qObj.id}`);
+    activeQuestions.forEach(qObj => {
+        const userAnswer = userAnswers[qObj.id];
+        const qDiv = document.getElementById(`q_${qObj.id}`);
+        const explanationEl = document.getElementById(`explain_${qObj.id}`);
 
-                if (qObj.type === 'essay') {
-                    explanationEl.innerHTML = `
-                        <strong>Đáp án:</strong><br>${formatText(qObj.answer)}<br><br>
-                        <strong>Câu trả lời của bạn:</strong><br>${formatText(userAnswer || '')}
-                    `;
-                    explanationEl.style.display = 'block';
-                } else {
-                    const options = qDiv.querySelectorAll('label.option');
-                    
-                    const correctLabel = options[qObj.answer];
-                    correctLabel.classList.add('correct');
+        if (qObj.type === 'essay') {
+            explanationEl.innerHTML = `
+                <strong>Đáp án:</strong><br>${formatText(qObj.answer)}<br><br>
+                <strong>Câu trả lời của bạn:</strong><br>${formatText(userAnswer || '')}
+            `;
+            explanationEl.style.display = 'block';
+        } else {
+            const options = qDiv.querySelectorAll('label.option');
 
-                    if (userAnswer !== undefined && userAnswer === qObj.answer) {
-                        correctCount++;
-                    } else if (userAnswer !== undefined) {
-                        const wrongLabel = options[userAnswer];
-                        wrongLabel.classList.add('wrong');
-						qDiv.querySelector('h4').style.color = 'var(--danger)';
-                    }
-                    
-                    if(qObj.explanation){
-                        explanationEl.textContent = `Giải thích: ${qObj.explanation}`;
-                        explanationEl.style.display = 'block';
-                    }
+            // reset toàn bộ class trước
+            options.forEach(lab => lab.classList.remove('correct', 'wrong'));
+
+            options.forEach((lab, i) => {
+                if (i === qObj.answer) {
+                    lab.classList.add('correct'); // tô xanh đáp án đúng
+                }
+                if (userAnswer !== undefined && userAnswer === i && i !== qObj.answer) {
+                    lab.classList.add('wrong');   // tô đỏ đáp án sai đã chọn
+                    qDiv.querySelector('h4').style.color = 'var(--danger)';
                 }
             });
 
-            if (!isEssayDomain) {
-                resultArea.style.display = 'block';
-                resultArea.innerHTML = '';
-                const score = correctCount;
-                const total = activeQuestions.length;
-                const isPassed = score >= PASSING_SCORE;
+            if (userAnswer !== undefined && userAnswer === qObj.answer) {
+                correctCount++;
+            } else if (userAnswer === undefined) {
+                // ❌ chưa chọn
+                qDiv.classList.add('unanswered');
+            }
 
-                const rBox = document.createElement('div');
-                rBox.className = 'result';
-                rBox.innerHTML = `
-                    <div style="flex:1">
-                        <div class="score" style="color:${isPassed ? 'var(--success)' : 'var(--danger)'}">
-                            Điểm số: ${score}/${total}
-                        </div>
-                        <div style="font-weight:600;color:${isPassed ? 'var(--success)' : 'var(--danger)'}">
-                            ${isPassed ? 'Chúc mừng! Hạnh đã đạt yêu cầu.' : 'Chưa đạt, Hạnh hãy ôn tập lại nghiêm túc hơn :)).'}
-                        </div>
-                    </div>
-                    <div style="display:flex;flex-direction:column;gap:8px">
-                        <button class="btn ghost" id="btnReview">Xem lại đáp án</button>
-                        <button class="btn" id="btnRetry">Làm lại</button>
-                    </div>
-                `;
-                resultArea.appendChild(rBox);
-
-                document.getElementById('btnReview').addEventListener('click', () => {
-                    activeQuestions.forEach(qObj => {
-                        const qDiv = document.getElementById(`q_${qObj.id}`);
-                        if(qObj.type === 'essay') return;
-
-                        const labels = qDiv.querySelectorAll('label.option');
-                        labels.forEach((lab, i) => {
-                            lab.classList.remove('correct', 'wrong');
-                            if (i === qObj.answer) lab.classList.add('correct');
-                            if (userAnswers[qObj.id] !== undefined && userAnswers[qObj.id] === i && i !== qObj.answer) {
-                                lab.classList.add('wrong');
-                            }
-                        });
-                        const explanationEl = document.getElementById(`explain_${qObj.id}`);
-                        if(qObj.explanation){
-                            explanationEl.textContent = `Giải thích: ${qObj.explanation}`;
-                            explanationEl.style.display = 'block';
-                        }
-                    });
-                });
-
-                document.getElementById('btnRetry').addEventListener('click', () => {
-                    loadQuestions();
-                });
+            if (qObj.explanation) {
+                explanationEl.textContent = `Giải thích: ${qObj.explanation}`;
+                explanationEl.style.display = 'block';
             }
         }
+    });
+
+    if (!isEssayDomain) {
+        resultArea.style.display = 'block';
+        resultArea.innerHTML = '';
+        const score = correctCount;
+        const total = activeQuestions.length;
+        const isPassed = score >= PASSING_SCORE;
+
+        const rBox = document.createElement('div');
+        rBox.className = 'result';
+        rBox.innerHTML = `
+            <div style="flex:1">
+                <div class="score" style="color:${isPassed ? 'var(--success)' : 'var(--danger)'}">
+                    Điểm số: ${score}/${total}
+                </div>
+                <div style="font-weight:600;color:${isPassed ? 'var(--success)' : 'var(--danger)'}">
+                    ${isPassed ? 'Chúc mừng! Hạnh đã đạt yêu cầu.' : 'Chưa đạt, Hạnh hãy ôn tập lại nghiêm túc hơn :)).'}
+                </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+                <button class="btn ghost" id="btnReview">Xem lại đáp án</button>
+                <button class="btn" id="btnRetry">Làm lại</button>
+            </div>
+        `;
+        resultArea.appendChild(rBox);
+
+        document.getElementById('btnReview').addEventListener('click', () => {
+            activeQuestions.forEach(qObj => {
+                const qDiv = document.getElementById(`q_${qObj.id}`);
+                if (qObj.type === 'essay') return;
+
+                const labels = qDiv.querySelectorAll('label.option');
+                labels.forEach((lab, i) => {
+                    lab.classList.remove('correct', 'wrong');
+                    if (i === qObj.answer) lab.classList.add('correct');
+                    if (userAnswers[qObj.id] !== undefined && userAnswers[qObj.id] === i && i !== qObj.answer) {
+                        lab.classList.add('wrong');
+                        qDiv.querySelector('h4').style.color = 'var(--danger)';
+                    }
+                });
+
+                if (userAnswers[qObj.id] === undefined) {
+                    qDiv.classList.add('unanswered');
+                }
+
+                const explanationEl = document.getElementById(`explain_${qObj.id}`);
+                if (qObj.explanation) {
+                    explanationEl.textContent = `Giải thích: ${qObj.explanation}`;
+                    explanationEl.style.display = 'block';
+                }
+            });
+        });
+
+        document.getElementById('btnRetry').addEventListener('click', () => {
+            loadQuestions();
+        });
+    }
+}
 
         function updateMeta() {
             questionCountEl.textContent = `Câu hỏi: ${activeQuestions.length}`;
@@ -11583,4 +11601,3 @@ function loadQuestions() {
     </script>
 </body>
 </html>
-
