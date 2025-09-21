@@ -12744,7 +12744,28 @@
 qDiv.addEventListener('change', (e) => {
     if (e.target.type === 'radio') {
         userAnswers[qObj.id] = parseInt(e.target.value);
-        // ❌ Không gọi submitTest() ở chế độ practice nữa
+
+        // Nếu đang ở tab "practice" thì hiển thị luôn đúng/sai cho câu này
+        const activeTab = document.querySelector('.tab.active').dataset.tab;
+        if (activeTab === 'practice') {
+            const options = qDiv.querySelectorAll('label.option');
+            options.forEach((lab, i) => {
+                lab.classList.remove('correct', 'wrong');
+                if (i === qObj.answer) {
+                    lab.classList.add('correct');
+                }
+                if (userAnswers[qObj.id] === i && i !== qObj.answer) {
+                    lab.classList.add('wrong');
+                }
+            });
+
+            // Hiện giải thích nếu có
+            const explanationEl = document.getElementById(`explain_${qObj.id}`);
+            if (qObj.explanation) {
+                explanationEl.textContent = `Giải thích: ${qObj.explanation}`;
+                explanationEl.style.display = 'block';
+            }
+        }
     }
 });
                 }
@@ -12954,6 +12975,7 @@ function submitTest() {
     </script>
 </body>
 </html>
+
 
 
 
