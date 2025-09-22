@@ -123,10 +123,14 @@
             background:linear-gradient(180deg,#fff,#fafbff);
             border:1px solid #f1f4fb;
         }
-        .q h4{
-            margin:0 0 8px 0;
-            font-size:15px;
-        }
+.q h4 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    white-space: normal;           /* Cho phép xuống dòng */
+    word-break: break-word;        /* Tự động ngắt khi từ quá dài */
+    overflow-wrap: break-word;     /* Tương thích nhiều trình duyệt */
+    line-height: 1.5;              /* Giãn dòng để dễ đọc */
+}
         .options{display:flex;flex-direction:column;gap:8px}
         label.option {
             display: flex;
@@ -12978,6 +12982,7 @@ function submitTest() {
     </script>
 </body>
 </html>
+
 
 
 
