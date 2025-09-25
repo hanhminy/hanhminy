@@ -4,6 +4,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Ôn tập & Kiểm Tra Hạnh Miny</title>
+
+<script>
+  // ===== Password Protect =====
+  (function(){
+    var pass = "hanhcute"; 
+    var userInput = prompt("🔒 Gái giỏi trai tài sẽ biết pass:");
+    if(userInput !== pass){
+        document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;color:red'>Sai mật khẩu! 🚫</h2>";
+        throw new Error("Xấu tính là sai pass - dừng tải trang");
+    }
+  })();
+</script>
+
 <style>
     :root{
         --bg:#f5f7fb;
@@ -12988,6 +13001,7 @@ function submitTest() {
     </script>
 </body>
 </html>
+
 
 
 
